@@ -2,7 +2,7 @@
 #define CUBE_H_
 
 #include <iostream>
-
+#include <memory>
 template<class T>
 class CubeSide
 {
@@ -11,10 +11,9 @@ private:
 	T width;
 	T height;
 public:
-	CubeSide() {}
-	CubeSide(T x, T y, T z) : length(x), width(y), height(z)
-	{}
-	~CubeSide() {}
+	CubeSide() {};
+	CubeSide(T x, T y, T z) : length(x), width(y), height(z) {};
+	~CubeSide() {};
 
 	void setSide(T x, T y, T z);
 	void printCubeSide();
@@ -34,14 +33,18 @@ template<class T>
 class Cube : public CubeSide<T>
 {
 private:
-	CubeSide<T>* TopLeft = new CubeSide<T>;
-	CubeSide<T>* BottomLeft = new CubeSide<T>;
-	CubeSide<T>* TopRight = new CubeSide<T>;
-	CubeSide<T>* BottomRight = new CubeSide<T>;
+	CubeSide<T> TopLeft;
+	CubeSide<T> BottomLeft;
+	CubeSide<T> TopRight;
+	CubeSide<T> BottomRight;
+
 public:
-	Cube() {}
+	Cube() {};
 	Cube(T x, T y, T z);
-	~Cube() {}
+	~Cube() 
+	{
+		//delete TopLeft; delete TopRight; delete BottomLeft; delete BottomRight;
+	}
 	void setCube(T x, T y, T z);
 	bool currentCube();
 
@@ -57,5 +60,6 @@ public:
 
 	void showCube();
 	void printSide(int i);
+
 };
 #endif

@@ -4,7 +4,8 @@
 #include <iostream>
 #include <string>
 #include <vector>
-#include "routines.cpp"
+#include "Routines.h"
+#include <exception>
 
 class Pallet
 {
@@ -23,15 +24,15 @@ public:
 	void setCubeMetr();
 
 	//Return functions for direct request.
-	int getQuanity() { return quanity; }; //returns quanity of pallet
-	double getLength() { return p_length; }; //return length of pallet
-	double getWidth() { return p_width; }; //return width of pallet
-	double getHeight() { return p_height; } //return height of pallet
+	inline int getQuanity() { return quanity; }; //returns quanity of pallet
+	inline double getLength() { return p_length; }; //return length of pallet
+	inline double getWidth() { return p_width; }; //return width of pallet
+	inline double getHeight() { return p_height; } //return height of pallet
 
-	double getArea() { return p_width * p_length * quanity; };//area of pallets
-	double getLoadedArea(int loadedPallets) { return (p_width * p_length * loadedPallets); }
-	double getPalSize() { return p_width * p_length; }; //Area of pallet
-	double getWidthSize() { return p_width * 2; }; //Pallet loading in width
+	inline double getArea() { return p_width * p_length * quanity; };//area of pallets
+	inline double getLoadedArea(int loadedPallets) { return (p_width * p_length * loadedPallets); }
+	inline double getPalSize() { return p_width * p_length; }; //Area of pallet
+	inline double getWidthSize() { return p_width * 2; }; //Pallet loading in width
 
 	//Input and output operators, to simplify console input
 	friend std::istream& operator>>(std::istream& is, Pallet & s); 
@@ -54,12 +55,12 @@ public:
 	Car(const Car& c);
 	~Car() {};
 
-	double getLength() { return this->length; }; 
-	double getWidth() { return this->width; }; 
-	double getHeight() { return this->height; }
-	double getCubeMetr() { return this->carCube; };
-	double getLengthPalletRow() { return lengthPalletRow; };
-	double getOccupiedPalletLength() { return occupiedPalletLength; };
+	inline double getLength() { return this->length; };
+	inline double getWidth() { return this->width; };
+	inline double getHeight() { return this->height; }
+	inline double getCubeMetr() { return this->carCube; };
+	inline double getLengthPalletRow() { return lengthPalletRow; };
+	inline double getOccupiedPalletLength() { return occupiedPalletLength; };
 
 	//Functions for calculating loading into a car
 	void setCubeM();

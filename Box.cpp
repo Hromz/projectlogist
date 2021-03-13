@@ -1,14 +1,9 @@
 #include "Box.h"
 
-Box::Box() : width(width), length(length), height(height)
-{
+Box::Box()
+{ }
 
-}
-
-Box::Box(Box* box) : width(this->width), length(this->length), height(this->height), quantity(this->quantity)
-{
-
-}
+Box::Box(const Box & box) : width(box.width), length(box.length), height(box.height), quantity(box.quantity) { }
 
 void Box::turnLeftSide()
 {
@@ -23,8 +18,7 @@ void Box::turnUpDownSide()
 	double temp;
 	temp = height;
 	height = length;
-	length = temp;
-	
+	length = temp;	
 }
 
 void Box::turnUpSide()
@@ -34,6 +28,7 @@ void Box::turnUpSide()
 	height = width;
 	width = temp;
 }
+
 
 void Box::optimumLoading(double carLength, double carWidth, double carDepth)
 {
@@ -66,41 +61,41 @@ void Box::optimumLoading(double carLength, double carWidth, double carDepth)
 	}
 }
 
-int Box::tryLenght(double carLength)
+int Box::tryLenght(double loadingLength)
 {
-	if ((carLength / length) >= (carLength / width) && (carLength / length) >= (carLength / height))
+	if ((loadingLength / length) >= (loadingLength / width) && (loadingLength / length) >= (loadingLength / height))
 		return 1;
-	else if ((carLength / width) >= (carLength / length) && (carLength / width) >= (carLength / height))
+	else if ((loadingLength / width) >= (loadingLength / length) && (loadingLength / width) >= (loadingLength / height))
 		return 2;
 	else
 		return 3;
 }
 
-int Box::tryWidth(double carWidth)
+int Box::tryWidth(double loadingWidth)
 {
-	if ((carWidth / length) >= (carWidth / width) && (carWidth / length) >= (carWidth / height))
+	if ((loadingWidth / length) >= (loadingWidth / width) && (loadingWidth / length) >= (loadingWidth / height))
 		return 1;
-	else if ((carWidth / width) >= (carWidth / length) && (carWidth / width) >= (carWidth / height))
+	else if ((loadingWidth / width) >= (loadingWidth / length) && (loadingWidth / width) >= (loadingWidth / height))
 		return 2;
 	else
 		return 3;
 }
 
-int Box::optimumLoadingSide(double carLength, double carWidth, double carHeight)
+int Box::optimumLoadingSide(double loadingLength, double loadingWidth, double loadingHeight)
 {
-	if (carLength >= carWidth && carLength >= carHeight)
+	if (loadingLength >= loadingWidth && loadingLength >= loadingHeight)
 		return 1;
-	else if (carWidth >= carLength && carWidth >= carHeight)
+	else if (loadingWidth >= loadingLength && loadingWidth >= loadingHeight)
 		return 2;
 	else
 	return 3;
 }
 
-int Box::tryHeight(double carDepth)
+int Box::tryHeight(double loadingDepth)
 {
-	if ((carDepth / length) >= (carDepth / width) && (carDepth / length) >= (carDepth / height))
+	if ((loadingDepth / length) >= (loadingDepth / width) && (loadingDepth / length) >= (loadingDepth / height))
 		return 1;
-	else if ((carDepth / width) >= (carDepth / length) && (carDepth / width) >= (carDepth / height))
+	else if ((loadingDepth / width) >= (loadingDepth / length) && (loadingDepth / width) >= (loadingDepth / height))
 		return 2;
 	else
 		return 3;
@@ -110,38 +105,72 @@ int Box::tryHeight(double carDepth)
 std::istream& operator>>(std::istream& is, Box& b)
 {
 	try {
-		std::cout << "Enter length, width and height of a box: ";
+		std::cout << "Enter length, width and height of a box in meters!: ";
 		is >> b.length >> b.width >> b.height;
 		if (!is)
-			throw(2);
+			throw(std::runtime_error("Input error"));
 	}
 	catch (...)
 	{
-		ClearInput(is);
+		clearInput(is);
 		std::cout << '\a';
 		std::cout << "Incorrect input!" << std::endl;
 		std::cout << "Please enter again! ";
-		std::cout << "Enter length, width and height of a box: ";
-		is >> b.length >> b.width >> b.height;
+		std::cout << "Enter length, width and height of a box in meters!: ";
+		try {
+			is >> b.length >> b.width >> b.height;
+			if (!is)
+				throw(std::runtime_error("Input error"));
+		}
+		catch (...)
+		{
+			std::cout << "Input is incorrect again! Terminating program";
+			exit(EXIT_FAILURE);
+		}
+
 	}
-	ClearInput(is);
+	EatLine();
 
 	try {
 		std::cout << "Enter quantity of boxes: ";
 		is >> b.quantity;
-		if (!is)
-			throw(2);
+		if (!is || b.quantity <= 0)
+			throw(std::runtime_error("Input error"));
 	}
 	catch (...)
 	{
-		ClearInput(is);
+		clearInput(is);
 		std::cout << '\a';
 		std::cout << "Incorrect input!" << std::endl;
 		std::cout << "Please enter again! ";
 		std::cout << "Enter quantity of boxes: ";
-		is >> b.quantity;
-	}
-	ClearInput(is);
+		try {
+			is >> b.quantity;
+			if (!is || b.quantity <= 0)
+				throw(std::runtime_error("Input error"));
+		}
+		catch(...)
+		{
+			std::cout << "Input is incorrect again! Terminating program";
+			exit(EXIT_FAILURE);
+		}
 
+	}
+	EatLine();
 	return is;
+}
+
+
+int Box::getLoadingQuantity(double loadingLength, double loadingWidth, double loadingHeight)
+{
+	int loadByLength, loadByWidth, loadByDepth;
+	optimumLoading(loadingLength, loadingWidth, loadingHeight);
+
+	loadByLength = MakeInt(loadingLength / length);
+	loadByWidth = MakeInt(loadingWidth / width);
+	loadByDepth = MakeInt(loadingHeight / height);
+
+	double totalPallet = (getQuantity() / (loadByDepth * loadByLength * loadByWidth) + 0.5);
+
+	return MakeInt(totalPallet);
 }

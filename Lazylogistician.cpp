@@ -76,8 +76,10 @@ std::istream& operator>>(std::istream& is, Car& s)
 	{ 
 	std::cout << "Enter length of car in meters: ";
 	is >> s.length;
-	if (!is)
-		throw(1);
+	if (!is || s.length == 0)
+		throw(std::runtime_error("Input error"));
+	if (s.length < 0)
+		makePositive(s.length);
 	}
 	catch (...)
 	{
@@ -85,17 +87,28 @@ std::istream& operator>>(std::istream& is, Car& s)
 		is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		std::cout << '\a'; 
 		std::cout << "Please enter length of car again: ";
-		is >> s.length;
+		try {
+			is >> s.length;
+			if (!is || s.length <= 0)
+				throw(std::runtime_error("Input error"));
+		}
+		catch (...)
+		{
+			std::cout << "Input is incorrect again! Terminating program";
+			exit(EXIT_FAILURE);
+		}
+
 	}
-	is.clear();
-	is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	EatLine();
 
 	try
 	{ 
 	std::cout << "Enter width of car in meters: ";
 	is >> s.width;
-	if (!is)
-		throw(1);
+	if (!is || s.width == 0)
+		throw(std::runtime_error("Input error"));
+	if (s.width < 0)
+		makePositive(s.width);
 	}
 	catch (...)
 	{
@@ -103,17 +116,25 @@ std::istream& operator>>(std::istream& is, Car& s)
 		is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		std::cout << '\a'; 
 		std::cout << "Please enter width of car again: ";
-		is >> s.width;
+		try {
+			is >> s.width;
+			if (!is || s.width <= 0)
+				throw(std::runtime_error("Input error"));
+		}
+		catch (...)
+		{
+			std::cout << "Input is incorrect again! Terminating program";
+			exit(EXIT_FAILURE);
+		}
 	}
-	is.clear();
-	is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	EatLine();
 
 	try 
 	{
 	std::cout << "Enter height of car in meter: ";
 	is >> s.height;
-	if (!is)
-		throw(1);
+	if (!is || s.height == 0)
+		throw(std::runtime_error("Input error"));
 	}
 	catch (...)
 	{
@@ -121,10 +142,18 @@ std::istream& operator>>(std::istream& is, Car& s)
 		is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
 		std::cout << '\a';
 		std::cout << "Please enter height of car again: ";
-		is >> s.height;
+		try {
+			is >> s.height;
+			if (!is || s.height <= 0)
+				throw(std::runtime_error("Input error"));
+		}
+		catch (...)
+		{
+			std::cout << "Input is incorrect again! Terminating program";
+			exit(EXIT_FAILURE);
+		}
 	}
-	is.clear();
-	is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	EatLine();
 
 	return is;
 }
@@ -174,76 +203,116 @@ std::istream& operator>>(std::istream& is, Pallet& s)
 		std::cout << "Enter length of pallet in meters: ";
 		is >> s.p_length;
 
-		if (!is)
-			throw 1;
+		if (!is || s.p_length == 0)
+			throw(std::runtime_error("Input error"));
+		if (s.p_length < 0)
+			makePositive(s.p_length);
 	}
 	catch (...)
 	{
-		is.clear();
-		is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		std::cout << '\a'; //in case of Breakfast!
-		std::cout << "Please enter length of pallet again: ";
-		is >> s.p_length;
+		clearInput(is);
+		std::cout << '\a';
+		std::cout << "Input is incorrect! Please enter length of pallet again: ";
+		try {
+			
+			is >> s.p_length;
+			if (!is || s.p_length <= 0)
+				throw(std::runtime_error("Input error"));
+		}
+		catch (...)
+		{
+			std::cout << "Input is incorrect again! Terminating program";
+			exit(EXIT_FAILURE);
+		}
+
 	}
-	is.clear();
-	is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+
+	EatLine();
 
 	try
 	{
 		std::cout << "Enter width of pallet in meters: ";
 		is >> s.p_width;
 
-		if (!is)
-			throw 2;
+		if (!is || s.p_width == 0)
+			throw(std::runtime_error("Input error"));
+		if (s.p_length < 0)
+			makePositive(s.p_width);
+
 	}
 	catch (...)
 	{
-		is.clear();
-		is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		clearInput(is);
 		std::cout << '\a'; //in case of Breakfast!
 		std::cout << "Please enter width of pallet again: ";
-		is >> s.p_width;
+		try {
+			is >> s.p_width;
+			if (!is || s.p_width <= 0)
+				throw(std::runtime_error("Input error"));
+		}
+		catch (...)
+		{
+			std::cout << "Input is incorrect again! Terminating program";
+			exit(EXIT_FAILURE);
+		}
 	}
-	is.clear();
-	is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-
+	EatLine();
 	try
 	{
 		std::cout << "Enter height of pallet in meters: ";
 		is >> s.p_height;
 
-		if (!is)
-			throw 2;
+		if (!is || s.p_height == 0)
+			throw(std::runtime_error("Input error"));
+		if (s.p_height < 0)
+			makePositive(s.p_height);
 	}
 	catch (...)
 	{
-		is.clear();
-		is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		std::cout << '\a'; //in case of Breakfast!
+		clearInput(is);
+		std::cout << '\a'; 
 		std::cout << "Please enter height of pallet again: ";
-		is >> s.p_height;
-	}
-	is.clear();
-	is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+		try {
+			is >> s.p_height;
+			if (!is || s.p_height <= 0)
+				throw(std::runtime_error("Input error"));
+		}
+		catch (...)
+		{
+			std::cout << "Input is incorrect again! Terminating program";
+			exit(EXIT_FAILURE);
+		}
 
+	}
+
+	EatLine();
 	try
 	{
 		std::cout << "Enter how many pallet(s) do you wish to load: ";
 		is >> s.quanity;
 
-		if (!is)
-			throw 3;
+		if (!is || s.quanity == 0)
+			throw(std::runtime_error("Input error"));
+		if (s.quanity < 0)
+			makePositive(s.quanity);
 	}
 	catch (...)
 	{
-		is.clear();
-		is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
-		std::cout << '\a'; //in case of Breakfast!
+		clearInput(is);
+		std::cout << '\a'; 
 		std::cout << "Please enter numbers of pallet again: ";
-		is >> s.quanity;
+		try {
+			is >> s.quanity;
+			if (!is || s.quanity <= 0)
+				throw(std::runtime_error("Input error"));
+		}
+		catch (...)
+		{
+			std::cout << "Input is incorrect again! Terminating program";
+			exit(EXIT_FAILURE);
+		}
 	}
-	is.clear();
-	is.ignore(std::numeric_limits<std::streamsize>::max(), '\n');
+	EatLine();
 	return is;
 }
 

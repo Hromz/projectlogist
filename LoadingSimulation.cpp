@@ -1,14 +1,14 @@
 #include "LoadingSimulation.h"
 
-void LoadingSimulation::setCarBack()
+void LoadingSimulation::setLoadingPlace()
 {
-	carBack.resize(CarCoordinateLength);
-	for (int i = 0; i < CarCoordinateLength; i++)
+	LoadingPlace.resize(LoadingPlaceLength);
+	for (int i = 0; i < LoadingPlaceLength; i++)
 	{
-		carBack[i].resize(CarCoordinateWidth);
-		for (int j = 0; j < CarCoordinateWidth; j++)
+		LoadingPlace[i].resize(LoadingPlaceWidth);
+		for (int j = 0; j < LoadingPlaceWidth; j++)
 		{
-			carBack[i][j].resize(CarCoordinateDepth);
+			LoadingPlace[i][j].resize(LoadingPlaceDepth);
 		}
 	}
 
@@ -16,15 +16,15 @@ void LoadingSimulation::setCarBack()
 	int j = 0;
 	int k = 0;
 
-	for (; i < CarCoordinateLength; i++)
+	for (; i < LoadingPlaceLength; i++)
 	{
-		carBack[i][j][k].setCube(1, 1, 1);
-		for (int j = 0; j < CarCoordinateWidth; j++)
+		LoadingPlace[i][j][k].setCube(1, 1, 1);
+		for (int j = 0; j < LoadingPlaceWidth; j++)
 		{
-			carBack[i][j][k].setCube(1, 1, 1);
-			for (int k = 0; k < CarCoordinateDepth; k++)
+			LoadingPlace[i][j][k].setCube(1, 1, 1);
+			for (int k = 0; k < LoadingPlaceDepth; k++)
 			{
-				carBack[i][j][k].setCube(1, 1, 1);
+				LoadingPlace[i][j][k].setCube(1, 1, 1);
 			}
 		}
 	}
@@ -33,26 +33,26 @@ void LoadingSimulation::setCarBack()
 
 void LoadingSimulation::setBox()
 {
-	Box.resize(BoxCoordinateLength);
-	for (int i = 0; i < BoxCoordinateLength; i++)
+	Box.resize(BoxLength);
+	for (int i = 0; i < BoxLength; i++)
 	{
-		Box[i].resize(BoxCoordinateWidth);
-		for (int j = 0; j < BoxCoordinateWidth; j++)
+		Box[i].resize(BoxWidth);
+		for (int j = 0; j < BoxWidth; j++)
 		{
-			Box[i][j].resize(BoxCoordinateDepth);
+			Box[i][j].resize(BoxDepth);
 		}
 	}
 	int i = 0;
 	int j = 0;
 	int k = 0;
 
-	for (; i < BoxCoordinateLength; i++)
+	for (; i < BoxLength; i++)
 	{
 		Box[i][j][k].setCube(1, 1, 1);
-		for (int j = 0; j < BoxCoordinateWidth; j++)
+		for (int j = 0; j < BoxWidth; j++)
 		{
 			Box[i][j][k].setCube(1, 1, 1);
-			for (int k = 0; k < BoxCoordinateDepth; k++)
+			for (int k = 0; k < BoxDepth; k++)
 			{
 				Box[i][j][k].setCube(1, 1, 1);
 			}
@@ -60,132 +60,149 @@ void LoadingSimulation::setBox()
 	}
 }
 
-
 void LoadingSimulation::LoadBox()
 {
 	int i = 0;
 	int j = 0;
 	int k = 0;
 
-	int CarWidth = getCarCoordWidth();
-	int CarLength = getCarCoordLength();
-	int CarDepth = getCarCoordDepth();
+	int loadingPlaceWidth = getLoadingPlaceWidth();
+	int loadingPlaceLength = getLoadingPlaceLength();
+	int loadingPlaceDepth = getLoadingPlaceDepth();
 
 	int BoxWidth = getBoxCoordWidth();
 	int BoxLength = getBoxCoordLength();
 	int BoxDepth = getBoxCoordDepth();
 
-			for (; i < CarLength; i++)
+	for (; i < loadingPlaceLength; i++)
+	{
+		BoxWidth = getBoxCoordWidth();
+		j = 0;
+		if (LoadingPlace[i].size() >= Box[0].size())
+		{
+			for (; j < loadingPlaceWidth; j++)
 			{
-				BoxWidth = getBoxCoordWidth();
-				j = 0;
-				if (carBack[i].size() >= Box[0].size())
-				{ 
-				for (; j < CarWidth; j++)
+				k = 0;
+				if (LoadingPlace[i][j].size() >= Box[0][0].size())
 				{
-					k = 0;
-					if (carBack[i][j].size() >= Box[0][0].size())
-					{ 
-						for (; k < BoxDepth; k++)
-						{
-							carBack[i][j][k] -= Box[0][0][0];
-						}
-						BoxWidth--;
-
-					}
-					if (BoxWidth == 0)
+					for (; k < BoxDepth; k++)
 					{
-						j = CarWidth;
-						BoxLength--;
+						LoadingPlace[i][j][k] -= Box[0][0][0];
 					}
-					else if (BoxWidth > 0 && j == CarWidth - 1)
-					{
-						j = 0;
-						i++;
-						BoxWidth--;
-					}
+					BoxWidth--;
 
-					
 				}
-				if (BoxLength == 0)
-					i = CarLength;
+				if (BoxWidth == 0) //jumping to next box length
+				{
+					j = loadingPlaceWidth;
+					BoxLength--;
 				}
-				
+
 			}
-			if (BoxLength > 0)
-			{
-				std::cout << "Car is full!" << std::endl;
-			}
-			else
-				removeOccupiedSpace();
+			if (BoxLength == 0) //exit the cycle when box is loaded
+				i = loadingPlaceLength;
+		}
+
+	}
+		removeOccupiedSpace();
 }
 
 void LoadingSimulation::removeOccupiedSpace()
 {
-	int i = 0;
-	int j = 0;
-	int k = 0;
+	size_t i = 0;
+	size_t j = 0;
+	size_t k = 0;
 	int BoxLength = getBoxCoordLength();
 	int BoxWidth = getBoxCoordWidth();
 	int BoxDepth = getBoxCoordDepth();
 
-	int CarWidth = getCarCoordWidth();
-	int CarLength = getCarCoordLength();
-	int CarDepth = getCarCoordDepth();
+	int loadingPlaceWidth = getLoadingPlaceWidth();
+	int loadingPlaceLength = getLoadingPlaceLength();
+	int loadingPlaceDepth = getLoadingPlaceDepth();
 
 	//Erasing empty 3D vector elements
-	for (; i < carBack.size(); i++)
+	for (; i < LoadingPlace.size(); i++)
 	{
 		j = 0;
 		BoxWidth = getBoxCoordWidth();
-		for (; j < carBack[i].size(); j++)
+		for (; j < LoadingPlace[i].size(); j++)
 		{
 			k = 0;
-			for (; k < carBack[i][j].size(); k++)
+			for (; k < LoadingPlace[i][j].size(); k++)
 			{
-				if (carBack[i][j][k].isEmpty()) //checking if cube sides at VECTOR(i,j,k) is empty
+				if (LoadingPlace[i][j][k].isEmpty()) //checking if cube sides at VECTOR(i,j,k) is empty
 				{
 
-					carBack[i][j].erase(carBack[i][j].begin(), carBack[i][j].begin() + getBoxCoordDepth());//if VECTOR(i,j,k) vector is empty decreasing vector depth by box depth
-					if (carBack[i][j].empty())
-						carBack[i].erase(carBack[i].begin(), carBack[i].begin() + getBoxCoordWidth());//if VECTOR(i,j) is empty decreasing vector width by box width
-					if (carBack[i].empty())
-						carBack.erase(carBack.begin()); //if VECTOR(i) is empty erasing length(i) element of vector
-					k = carBack[i][j].size(); //resets depth counter
-					BoxWidth--;
+				LoadingPlace[i][j].erase(LoadingPlace[i][j].begin(), LoadingPlace[i][j].begin() + getBoxCoordDepth());//if VECTOR(i,j,k) vector is empty decreasing vector depth by box depth
+				if (LoadingPlace[i][j].empty() || LoadingPlace[i][j].size() <= Box[0][0].size())
+				{
+					
+					LoadingPlace[i][j].erase(LoadingPlace[i][j].begin(), LoadingPlace[i][j].end());
+
+					if (LoadingPlace[i].empty() || LoadingPlace[i].size() <= Box[0].size())
+					{
+						LoadingPlace[i].erase(LoadingPlace[i].begin(), LoadingPlace[i].end());
+					}
+
 				}
 
+				if (LoadingPlace[i][j].size() <= getBoxCoordDepth())
+					LoadingPlace[i][j].erase(LoadingPlace[i][j].begin(), LoadingPlace[i][j].begin() + LoadingPlace[i][j].size());
+				k = LoadingPlace[i][j].size(); //resets depth counter
+				BoxWidth--;
+				}
 			}
-			if (BoxWidth == 0)
+			if (BoxWidth == 0) //jumping to next box length
 			{
-				j = CarWidth;
+				j = loadingPlaceWidth;
 				BoxLength--;
 			}
 			
 		}
-		if (BoxLength == 0)
-			i = CarLength;
-		
+		if (BoxLength == 0) //exit the cycle when box is loaded
+		{
+			i = loadingPlaceLength;
+		}
+
 	}
+
 }
 
-void LoadingSimulation::setBoxCoordinate(double BoxLength, double BoxWidth, double BoxDepth)
+void LoadingSimulation::setBox(double BoxLength, double BoxWidth, double BoxDepth)
 {
-	BoxCoordinateLength = MakeInt((BoxLength + 0.001) * 10);
-	BoxCoordinateDepth = MakeInt((BoxDepth + 0.001) * 10);
-	BoxCoordinateWidth = MakeInt((BoxWidth + 0.001) * 10);
+	this->BoxLength = MakeInt((BoxLength + 0.001) * 10);
+	this->BoxDepth = MakeInt((BoxDepth + 0.001) * 10);
+	this->BoxWidth = MakeInt((BoxWidth + 0.001) * 10);
 }
 
-void LoadingSimulation::setCarCoordinate(double CarLength, double CarWidth, double CarDepth)
+void LoadingSimulation::setLoadingPlace(double Length, double Width, double Depth)
 {
-	CarCoordinateLength = MakeInt((CarLength + 0.001) * 10);
-	CarCoordinateDepth = MakeInt((CarDepth + 0.001) * 10);
-	CarCoordinateWidth = MakeInt((CarWidth + 0.001) * 10);
+	LoadingPlaceLength = MakeInt((Length + 0.001) * 10);
+	LoadingPlaceDepth = MakeInt((Depth + 0.001) * 10);
+	LoadingPlaceWidth = MakeInt((Width + 0.001) * 10);
 }
 
-bool LoadingSimulation::IsLoadPossible(double BoxCubes, double CarCube)
+bool LoadingSimulation::IsLoadPossible(double BoxCubes, double LoadCube)
 {
 	roundNum(BoxCubes);
-	roundNum(CarCube);
-	return CarCube >= BoxCubes ? 1 : 0;
+	roundNum(LoadCube);
+	return LoadCube >= BoxCubes ? 1 : 0;
+}
+
+
+void LoadingSimulation::resetLoadingPlace()
+{
+	setLoadingPlace();
+}
+
+bool LoadingSimulation::isSpaceLeft() 
+{
+	int i = getLoadingPlaceLength() - 1;
+	int j = getLoadingPlaceWidth() - 1;
+
+	if (LoadingPlace[i][j].size() <= Box[0][0].size())
+		return false;
+	else
+		return true;
+
 }

@@ -3,19 +3,19 @@
 template <typename T>
 void Cube<T>::setCube(T x, T y, T z)
 {
-	TopLeft->setSide(x, y, z);
-	BottomLeft->setSide(x, y, z);
-	TopRight->setSide(x, y, z);
-	BottomRight->setSide(x, y, z);
+	TopLeft.setSide(x, y, z);
+	BottomLeft.setSide(x, y, z);
+	TopRight.setSide(x, y, z);
+	BottomRight.setSide(x, y, z);
 }
 
 template <typename T>
 Cube<T>::Cube(T x, T y, T z)
 {
-	TopLeft->setSide(x, y, z);
-	BottomLeft->setSide(x, y, z);
-	TopRight->setSide(x, y, z);
-	BottomRight->setSide(x, y, z);
+	TopLeft.setSide(x, y, z);
+	BottomLeft.setSide(x, y, z);
+	TopRight.setSide(x, y, z);
+	BottomRight.setSide(x, y, z);
 }
 
 template<class T>
@@ -45,10 +45,10 @@ Cube<T> Cube<T>::operator+(const Cube& cube)
 template<class T>
 Cube<T> Cube<T>::operator-=(const Cube& cube)
 {
-	*(this->BottomLeft) -= *(cube.BottomLeft);
-	*(this->TopRight) -= *(cube.TopRight);
-	*(this->BottomRight) -= *(cube.BottomRight);
-	*(this->TopLeft) -= *(cube.TopLeft);
+	this->BottomLeft -= cube.BottomLeft;
+	this->TopRight -= cube.TopRight;
+	this->BottomRight -= cube.BottomRight;
+	this->TopLeft -= cube.TopLeft;
 
 	return *this;
 }
@@ -56,10 +56,10 @@ Cube<T> Cube<T>::operator-=(const Cube& cube)
 template<class T>
 Cube<T> Cube<T>::operator+=(const Cube& cube)
 {
-	*(this->BottomLeft) += *(cube.BottomLeft);
-	*(this->TopRight) += *(cube.TopRight);
-	*(this->BottomRight) += *(cube.BottomRight);
-	*(this->TopLeft) += *(cube.TopLeft);
+	this->BottomLeft += (cube.BottomLeft);
+	this->TopRight += (cube.TopRight);
+	this->BottomRight += (cube.BottomRight);
+	(this->TopLeft) += (cube.TopLeft);
 
 	return *this;
 }
@@ -83,10 +83,10 @@ bool Cube<T>::operator<(const Cube& cube)
 template<class T>
 Cube<T> Cube<T>::operator*=(int x)
 {
-	*(this->BottomLeft) *= x;
-	*(this->TopRight) *= x;
-	*(this->BottomRight) *= x;
-	*(this->TopLeft) *= x;
+	(this->BottomLeft) *= x;
+	(this->TopRight) *= x;
+	(this->BottomRight) *= x;
+	(this->TopLeft) *= x;
 
 	return *this;
 }
@@ -129,7 +129,7 @@ void Cube<T>::showCube()
 template<class T>
 bool Cube<T>::isEmpty()
 {
-	if (!TopLeft->currentCubeSide() && !TopRight->currentCubeSide() && !BottomLeft->currentCubeSide() && !BottomRight->currentCubeSide())
+	if (!TopLeft.currentCubeSide() && !TopRight.currentCubeSide() && !BottomLeft.currentCubeSide() && !BottomRight.currentCubeSide())
 		return true;
 	else
 		return false;
@@ -201,7 +201,7 @@ CubeSide<T> CubeSide<T>::operator>(const CubeSide& side)
 	if (length > side.length && width > side.width && height > side.height)
 		return true;
 	else
-		false;
+		return false;
 }
 
 template<class T>
@@ -210,7 +210,7 @@ CubeSide<T> CubeSide<T>::operator<(const CubeSide& side)
 	if (length < side.length && width < side.width && height < side.height)
 		return true;
 	else
-		false;
+		return false;
 }
 
 template<class T>
@@ -240,5 +240,5 @@ bool CubeSide<T>::currentCubeSide()
 	else if (length == 0 && width == 0 && height == 0)
 		return false;
 	else
-		false;
+		return false;
 }

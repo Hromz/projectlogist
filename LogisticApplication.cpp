@@ -3,13 +3,11 @@
 //Simple function
 //Asks user to input car and pallet size
 //Print if loading is possible or not
-void LogisticApplication::SingleOrder()
+void LogisticApplication::singleOrder()
 {
-	using std::cout;
-	using std::cin;
+	using std::cout; using std::cin;
 
-	Pallet pallets;
-	Car car;
+	Pallet pallets; Car car;
 
 	cin >> car;
 	car.setCubeM();
@@ -53,7 +51,7 @@ void LogisticApplication::SingleOrder()
 }
 
 //Loading several orders into car with pallets
-void LogisticApplication::MultiOrder()
+void LogisticApplication::multiOrder()
 {
 	using std::cout;
 	using std::endl;
@@ -65,8 +63,9 @@ void LogisticApplication::MultiOrder()
 	Pallet tempPallet;
 	Car car;
 
-	string* q = new string;
+	string q;
 	int row;
+	char inp;
 
 	cin >> car;
 	car.setCubeM();
@@ -76,18 +75,20 @@ void LogisticApplication::MultiOrder()
 	double carlength = car.getLength();
 	double lengthSum = 0;
 
-	cout << "Enter 'p' to process entering the data, 'q' for stop\n";
-	while (cin >> *q && * q != "q")
+	while (cin >> tempPallet)
 	{
-		cin >> tempPallet;
 		orders.push_back(tempPallet);
 		if (tempPallet.getHeight() > car.getHeight())
 		{
 			cout << "Car cannot be loaded, pallet's exceeds car height!";
 			break;
 		}
-		cout << "Enter 'p' to process entering the data, 'q' for stop\n";
+		cout << "Continue input ? y or n: ";
+		cin >> inp;
+		if (inp == 'n')
+			break;
 	}
+
 	if (tempPallet.getHeight() > car.getHeight())
 	{
 		exit(1);
@@ -104,11 +105,10 @@ void LogisticApplication::MultiOrder()
 		{
 			cout << "Car can't be loaded" << endl;
 			carlength -= lengthSum;
-			break;
 		}
 
 	}
-	if ((carlength) >= 0)
+	if ((carlength) > 0)
 	{
 		cout << "Car can be loaded!" << endl;
 		cout << carlength << " length left in the car.";
@@ -117,13 +117,12 @@ void LogisticApplication::MultiOrder()
 	{
 		cout << "Car can't be loaded!" << endl;
 	}
-	delete q;
 }
 
 //Asks user to enter pallet size, quantity and destination address
 //Calculates how many car will need for an order
 // i.e. 34 euro pallet OUTPUT ---> 1 EuroTrack and Porter
-void LogisticApplication::CarCheck()
+void LogisticApplication::carCheck() //redo code logic later and optimize algorithm!
 {
 	using std::cout;
 	using std::endl;
@@ -140,33 +139,37 @@ void LogisticApplication::CarCheck()
 	CarCatalogue.emplace_back(new TenTonCar());
 	CarCatalogue.emplace_back(new EuroTrackCar());
 
-	string* input = new string;
-	string * tempAddress = new string;
+	
+	char inp;
+	string tempAdress;
 
 	vector<Pallet> order;
 	vector<string> adress;
 	vector<std::unique_ptr<BaseCar>> CarOrder;
 
-	cout << "Enter 'p' to process entering the data, 'q' for stop\n";
-	while (cin >> *input && *input != "q")
+
+	cout << "Enter delivery adress or destination point: ";
+	while (getline(cin, tempAdress))
 	{
-		cout << "Enter delivery adress or destination point\n";
-		cin.get();
-		getline(cin, *tempAddress);
-		adress.push_back(*tempAddress);
+		adress.push_back(tempAdress);
 		cin >> tempPallets;
 		order.push_back(tempPallets);
 
-		cout << "Enter 'p' to process entering the data, 'q' for stop\n";
+		cout << "Continue input ? y or n: ";
+		cin >> inp;
+		if (inp == 'n')
+			break;
+
+		cout << "Enter delivery adress or destination point: ";
+		cin.get();
 	}
 
-	auto its = adress.begin();
-	auto itp = order.begin();
-	auto catalogueIt = CarCatalogue.begin();
 	int loadedPallets = 0;
+	auto its = adress.begin(); auto itp = order.begin();
 
-	for (; its != adress.end(), itp != order.end(); itp++, its++)
+	for (; its != adress.end(), itp != order.end(); itp++, ++its) //
 	{
+		auto catalogueIt = CarCatalogue.begin();
 		double totalArea = itp->getArea();
 		int tempQuan = itp->getQuanity();
 		while (totalArea > 0 && tempQuan > 0)
@@ -190,18 +193,31 @@ void LogisticApplication::CarCheck()
 			{
 				catalogueIt++;
 			}		
-		} catalogueIt++ = CarCatalogue.begin();
+		} //catalogueIt++ = CarCatalogue.begin();
 
-		std::cout << "For " << *(its) << endl;
-		auto car = CarOrder.begin();
-	for (; car != CarOrder.end(); car++)
+		std::cout << "For " << *its << endl;
+		auto car = CarCatalogue.begin();
+		auto itcar = CarOrder.begin();
+
+		vector<string> tempCarName;
+		for (; itcar  != CarOrder.end(); itcar++)
+		{
+			tempCarName.emplace_back((*itcar)->getCarName());
+		}
+
+	for (; car != CarCatalogue.end(); car++)
 	{
-		cout << "One " << ((*car)->getCarName()) << endl;
+		int carquan = 0;
+		string ord = (*car)->getCarName();
+		carquan = count(tempCarName.begin(), tempCarName.end(), ord); //checking and counts how many cars were ordered and which one
+
+		if(carquan > 0)
+		cout << carquan << " " << ((*car)->getCarName()) << endl;	
 	}
-	CarOrder.clear();//Clearing vector for next order
-	cout << "You need for an order\n." << endl;
+	tempCarName.clear();//Clearing vector for next order
+	CarOrder.clear();  //Clearing vector for next order
+	cout << "You need for an order\n" << endl;
 	}
-	delete input, tempAddress;
 }
 
 //Takes total length, car length and numbers of pallet loaded in width
@@ -237,7 +253,7 @@ int LogisticApplication::loadWidth(double palletWidth, double carWidth)
 
 //Loading car with boxes
 //Asking user to input size of boxes and quantity
-//Checking if them can be loaded in a car
+//Checking if they can be loaded in a car
 void LogisticApplication::boxloading()
 {
 	using std::cout;
@@ -247,7 +263,7 @@ void LogisticApplication::boxloading()
 	using std::string;
 
 	LoadingSimulation load;
-	string * input = new string;
+	char inp;
 	double totalBoxCubes = 0;
 
 	Car car;
@@ -257,37 +273,39 @@ void LogisticApplication::boxloading()
 	Box tempbox;
 	std::vector<Box> BoxOrder;
 
-	cout << "Enter 'p' to process entering the data, 'q' for stop\n";
-	while (cin >> *input && *input != "q")
+	while (cin >> tempbox)
 	{
-		cin >> tempbox;
 		tempbox.optimumLoading(car.getLength(), car.getWidth(), car.getHeight());
 		BoxOrder.push_back(tempbox);
-		cout << "Enter 'p' to process entering the data, 'q' for stop\n";
+
+		cout << "Continue input ? y or n: ";
+		cin >> inp;
+		if (inp == 'n')
+			break;
 	}
+
+	//sorting box for loading, first begger one and after smaller ones
 	std::sort(BoxOrder.begin(), BoxOrder.end(), [](Box& box1, Box& box2) {
 		return (box1.getLength(), box1.getHeight(), box1.getWidth()) > (box2.getLength(), box2.getHeight(), box2.getWidth());
-		}
-		);
+	});
 
-	load.setCarCoordinate(car.getLength(), car.getWidth(), car.getHeight());
-	load.setCarBack();
+	load.setLoadingPlace(car.getLength(), car.getWidth(), car.getHeight());
+	load.setLoadingPlace();
 
-	for (int j = 0; j < BoxOrder.size(); j++)
+	for (size_t j = 0; j < BoxOrder.size(); j++)
 	{
 		totalBoxCubes += BoxOrder[j].getCube();
 	}
 
 	if(load.IsLoadPossible(totalBoxCubes, car.getCubeMetr()))
 	{ 
-	for (int j = 0; j < BoxOrder.size(); j++)
+	for (size_t j = 0; j < BoxOrder.size(); j++)
 	{
-		load.setBoxCoordinate(BoxOrder[j].getLength(), BoxOrder[j].getWidth(), BoxOrder[j].getHeight());
+		load.setBox(BoxOrder[j].getLength(), BoxOrder[j].getWidth(), BoxOrder[j].getHeight());
+		load.setBox();
 		for (int i = 0; i < BoxOrder[j].getQuantity() - 1; i++)
 		{
-				load.setBox();
 				load.LoadBox();
-				load.checkCarBack();
 		}
 		car.changeCubeMetr(BoxOrder[j].getCube());
 	}
@@ -297,30 +315,24 @@ void LogisticApplication::boxloading()
 		std::cout << "Car cannot be loaded!\nBoxes volume exceeds car volume!" << std::endl;
 	}
 
-	if (car.getCubeMetr() >= 0)
+	if (totalBoxCubes <= car.getCubeMetr())
 		std::cout << "Car can be loaded! " << car.getCubeMetr() << " cubes left in the car." << std::endl;
 
-	delete input;
 }
 
 
 //Asks user to input car dimensions
 //Asks for total cubes and quantity of boxes
 //Calculates approximate box dimensions and check if it can be loaded to car
-void LogisticApplication::CubeBoxloading()
+void LogisticApplication::cubeBoxloading()
 {
-	using std::cout;
-	using std::endl;
-	using std::cin;
-	using std::string;
-	using std::vector;
+	using std::cout; using std::endl; using std::cin; using std::string; using std::vector;
 
-	double* tempLength = new double;
-	double* tempWidth = new double;
-	double* tempHeight = new double;
-	double* totalCubes = new double;
-	int* tempQuantity = new int;
-	string* input = new string;
+	//Box dimension is unknown so first we are storing pseudo sides to temp variable and after that assign to box class
+	//double tempLength, tempWidth, tempHeight, totalCubes;
+	double totalCubes;
+	int tempQuantity = 0;
+	char inp;
 	double totalBoxCubes = 0;
 
 	Car car;
@@ -331,23 +343,25 @@ void LogisticApplication::CubeBoxloading()
 	std::vector<Box> BoxOrder;
 	LoadingSimulation load;
 
-	cout << "Enter 'p' to process entering the data, 'q' for stop\n";
-	while (cin >> *input && *input != "q")
+	cout << "Enter quantity: ";
+	while (cin >> tempQuantity)
 	{
-		cout << "Enter quanity: ";
-		cin >> *tempQuantity;
+		EatLine();
+		cout << "Enter total cube of boxes: ";
+		cin >> totalCubes;
 		EatLine();
 
-		cout << "Enter cubes of boxes: ";
-		cin >> *totalCubes; 
-		EatLine();
-
-		totalBoxCubes += *totalCubes;	//Summarizing cubes from orders and check if load is possible according to car cubes
-		setBoxSize(*totalCubes, *tempQuantity, tempBox); //calculates each side of a box
-		cout << "Cube is " << *totalCubes << endl;
+		totalBoxCubes += totalCubes;	//Summarizing cubes from orders and check if load is possible according to car cubes
+		setBoxSize(totalCubes, tempQuantity, tempBox); //calculates each side of a box
+		cout << "Cube is " << totalCubes << endl;
 		BoxOrder.push_back(tempBox);
 
-		cout << "Enter 'p' to process entering the data, 'q' for stop\n";
+		cout << "Continue input ? y or n: ";
+		cin >> inp;
+		if (inp == 'n')
+			break;
+		else
+			cout << "Enter quantity: ";
 	}
 
 	if (load.IsLoadPossible(totalBoxCubes, car.getCubeMetr()))
@@ -357,30 +371,205 @@ void LogisticApplication::CubeBoxloading()
 			}
 		);
 
-		load.setCarCoordinate(car.getLength(), car.getWidth(), car.getHeight());
-		load.setCarBack();
+		load.setLoadingPlace(car.getLength(), car.getWidth(), car.getHeight());
+		load.setLoadingPlace();
 
-		for (int j = 0; j < BoxOrder.size(); j++)
+		for (size_t j = 0; j < BoxOrder.size(); j++)
 		{
-			load.setBoxCoordinate(BoxOrder[j].getLength(), BoxOrder[j].getWidth(), BoxOrder[j].getHeight());
+			load.setBox(BoxOrder[j].getLength(), BoxOrder[j].getWidth(), BoxOrder[j].getHeight());
+			load.setBox();
 			for (int i = 0; i < BoxOrder[j].getQuantity() - 1; i++)
 			{
-				load.setBox();
 				load.LoadBox();
-				load.checkCarBack();
 			}
 			car.changeCubeMetr(BoxOrder[j].getCube());
 
 		}
-		if (car.getCubeMetr() >= 0)
+		if (car.getCubeMetr() >= 0 && car.getCubeMetr() <= totalBoxCubes)
 			std::cout << "Car can be loaded! " << car.getCubeMetr() << " cubes left in the car." << std::endl;
 	}
 	else
 		std::cout << "Car cannot be loaded!\nBoxes volume exceeds car volume!" << std::endl;
 
-	delete tempHeight, tempLength, tempWidth, input, tempQuantity, totalCubes;
 }
 
+void LogisticApplication::boxesIntoPallet() {
+	using std::cout;
+	using std::cin;
+	using std::endl;
+	using std::vector;
+
+	char inp;
+
+	int palletQuantity = 0;
+	double palletLength, palletWidth, palletHeight;
+	std::cout << "Enter size of a pallet: ";
+	cin >> palletLength >> palletWidth >> palletHeight;
+
+	Box tempbox;
+	vector<Box> order;
+
+	
+	while (cin >> tempbox)
+	{
+		tempbox.optimumLoading(palletLength, palletWidth, palletHeight);
+		order.push_back(tempbox);
+		cout << "Continue input ? y or n: ";
+		cin >> inp;
+		if (inp == 'n')
+			break;
+	}
+
+	for (int i = 0; i < (int)order.size(); i++)
+	{
+		palletQuantity += order[i].getLoadingQuantity(palletLength, palletWidth, palletHeight);
+	}
+
+	if(palletQuantity == 0)
+	cout << palletQuantity + 1 << " pallet you need for this quantity!" << endl;
+	else
+		cout << palletQuantity << " pallet you need for this quantity!" << endl;
+}
+
+void LogisticApplication::boxesIntoCarViaCatalogue() {
+	using std::cout;
+	using std::endl;
+	using std::cin;
+	using std::vector;
+	using std::string;
+
+	Box tempbox;
+	std::vector<Box> order;
+	LoadingSimulation loadingplace;
+	char inp;
+	string tempAdress;
+
+	vector<string> adress;
+	vector<std::unique_ptr<BaseCar>> CarOrder;
+
+	cout << "Enter delivery adress or destination point: ";
+	while (getline(cin, tempAdress))
+	{
+		adress.push_back(tempAdress);
+		while (cin >> tempbox)
+		{
+			order.push_back(tempbox);
+
+			cout << "Continue box input ? y or n: ";
+			cin >> inp;
+			if (inp == 'n')
+				break;
+		}
+
+		std::sort(order.begin(), order.end(), [](Box& box1, Box& box2) {
+			return (box1.getLength(), box1.getHeight(), box1.getWidth()) > (box2.getLength(), box2.getHeight(), box2.getWidth());
+			});
+
+		cout << tempAdress;
+		chooseCar(order.size(), order);
+
+
+		cout << "Continue order input ? y or n: ";
+		cin >> inp;
+		if (inp == 'n')
+			break;
+
+		cout << "Enter delivery adress or destination point: ";
+		cin.get();
+	}
+
+
+
+}
+
+
+void LogisticApplication::chooseCar(int size_v, std::vector<Box> boxRef)
+{
+	char carchoice;
+	double sumOfCubes = 0;
+	int sumOfBoxes = 0;
+	LoadingSimulation load;
+
+	auto b = boxRef.begin();
+
+	std::vector<std::unique_ptr<BaseCar>> CarCatalogue;
+	std::cout << "Choose which type of car you want to use for an order.\n";
+	std::cout << "1 for less that 10 cubes.\n" << "2 for less that 20 cubes\n" << "3 for euro track\n";
+	std::cout << "0 for exit\n";
+
+    std::cin >> carchoice;
+
+	switch (carchoice)
+	{
+	case '1':
+	{
+		CarCatalogue.emplace_back(new PorterCar());
+		CarCatalogue.emplace_back(new MersedesCar());
+		CarCatalogue.emplace_back(new GazelCar());
+		break;
+	}
+	case '2':
+	{
+		CarCatalogue.emplace_back(new FiveTonCar());
+		CarCatalogue.emplace_back(new TenTonCar());
+		break;
+	}
+	case '3':
+	{
+		CarCatalogue.emplace_back(new EuroTrackCar());
+		break;
+	}
+	default:
+		std::cout << "Incorrect choice!\n" << "Please enter again!\n";
+		break;
+	};
+
+
+	/*std::vector< std::unique_ptr< YourClass >> pointers;
+for( auto&& pointer : pointers ) {
+    pointer->functionOfYourClass();
+}
+	*/
+	/*for (auto&& catalogueIt : CarCatalogue)
+	{
+		if (sumOfCubes <= (catalogueIt)->getCarCube())
+			break;
+	}*/
+
+	auto && catalogueIt = CarCatalogue.begin();
+	b->optimumLoading((*catalogueIt)->getLength(), (*catalogueIt)->getWidth(), (*catalogueIt)->getHeight());
+	load.setLoadingPlace((*catalogueIt)->getLength(), (*catalogueIt)->getWidth(), (*catalogueIt)->getHeight());
+	load.setLoadingPlace();
+
+	int tempBoxQuan = 0;
+	int carQuan = 1;
+
+	for (; b != boxRef.end(); b++)
+	{
+		load.setBox(b->getLength(), b->getWidth(), b->getHeight());
+		load.setBox();
+		tempBoxQuan = b->getQuantity();
+		while(tempBoxQuan > 0)
+		{
+			if(load.isSpaceLeft())
+					load.LoadBox();
+				else
+				{
+					load.setLoadingPlace((*catalogueIt)->getLength(), (*catalogueIt)->getWidth(), (*catalogueIt)->getHeight());
+					load.setLoadingPlace();
+					load.LoadBox();
+					carQuan++;
+				}
+			tempBoxQuan--;
+		}
+	}
+
+	if (carQuan == 0)
+		std::cout << (carQuan + 1) << " " << (*catalogueIt)->getCarName() << " you need for an order.\n" << std::endl;
+	else
+		std::cout << carQuan << " " << (*catalogueIt)->getCarName() << " you need for an order\n";
+	CarCatalogue.clear();
+}
 
 //Takes car length, width and height
 //Returns cube of the car
@@ -393,20 +582,20 @@ double LogisticApplication::CarCube(double cLenght, double cWidth, double cHeigh
 //One staight line
 int LogisticApplication::QunLoadBoxWidth(double carLength, double boxWidth)
 {
-	return (carLength / boxWidth);
+	return MakeInt((carLength / boxWidth));
 }
 
 //Returns how many boxes will be loaded by placing them in length around car length
 //One staight line
 int LogisticApplication::QunLoadBoxlength(double carLength, double boxLength)
 {
-	return (carLength / boxLength);
+	return MakeInt((carLength / boxLength));
 }
 
 //Returns how many boxes will be loaded by placing them in height, placing on each others
 int LogisticApplication::QunLoadBoxHeigth(double carHeight, double boxHeight)
 {
-	return (carHeight / boxHeight);
+	return MakeInt((carHeight / boxHeight));
 }
 
 //Returns cubes of a box
@@ -426,7 +615,7 @@ double LogisticApplication::CubOneBox(int quanity, double cube)
 
 //Function evaluating length, width and height untill (total cubes > n)
 //The code will be reworked at the beginning of April
-void LogisticApplication::setBoxSize(double BoxCubes, double Quantity, Box & box)
+void LogisticApplication::setBoxSize(double BoxCubes, int Quantity, Box & box)
 {
 	using std::cout;
 	using std::endl;
@@ -449,54 +638,3 @@ void LogisticApplication::setBoxSize(double BoxCubes, double Quantity, Box & box
 	cout << "Width of one box ~" << tempWidth << endl;
 	cout << "Height of one box ~" << tempHeight << endl;
 }
-
-
-//Check which car is needed for an order
-//Receives data from pallets class
-//Prints quantity and car type needed for an order
-/*void LogisticApplication::getCar(int quantity, double totalLength, double palletLength, double palletWidth)
-{
-	using std::vector;
-	using std::endl;
-	using std::cout;
-
-	//Car catalogue
-	vector<std::unique_ptr<BaseCar>> CarCatalogue;
-	CarCatalogue.emplace_back(new PorterCar());
-	CarCatalogue.emplace_back(new MersedesCar());
-	CarCatalogue.emplace_back(new GazelCar());
-	CarCatalogue.emplace_back(new FiveTonCar());
-	CarCatalogue.emplace_back(new TenTonCar());
-	CarCatalogue.emplace_back(new EuroTrackCar());
-
-	//Storing ordered cars
-	vector<std::unique_ptr<BaseCar>> order;
-
-	auto car = CarCatalogue.begin();
-
-	while (totalLength > 0 && quantity > 0)
-	{
-		if ((*car)->isApplicaple(quantity))
-		{
-			order.emplace_back((*car)->duplicate());
-			quantity -= (int)((*car)->getLength() / palletLength) * (*car)->getLoadWidth(palletWidth);
-			totalLength = ((totalLength / (*car)->getLoadWidth(palletWidth)) - (*car)->getLength());
-		}
-		else if ((car == CarCatalogue.end() - 1) && (!(*car)->isApplicaple(quantity)))
-		{
-			order.emplace_back((*car)->duplicate());
-			quantity -= (int)((*car)->getLength() / palletLength) * (*car)->getLoadWidth(palletWidth);
-			totalLength = (((totalLength / (*car)->getLoadWidth(palletWidth)) + 0.1) - (*car)->getLength());
-			car = CarCatalogue.begin();
-		}
-		else
-			car++;
-	}
-
-	car = order.begin();
-	for (; car != order.end(); car++)
-	{
-		cout << "One " << (*car)->getCarName() << endl;
-	}
-	cout << "You need for an order!" << endl;
-}*/

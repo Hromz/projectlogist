@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <vector>
-#include <fstream>
 #include <algorithm>
 #include <Windows.h>
 #include <string>
@@ -12,7 +11,6 @@
 #include <stdlib.h>
 #include "LoadingSimulation.h"
 #include "Box.h"
-
 
 class LogisticApplication
 {
@@ -23,8 +21,8 @@ private:
 public:
 	LogisticApplication() {}
 	~LogisticApplication() {}
-	void getCar(int quantity, double totalLength, double palletLength, double palletWidth);
-	void setBoxSize(double BoxCubes, double Quantity, Box& b);
+	//void getCar(int quantity, double totalLength, double palletLength, double palletWidth);
+	void setBoxSize(double BoxCubes, int Quantity, Box& b);
 
 	double CarCube(double cLenght, double cWidth, double cHeight); //returns cubic of car
 	int QunLoadBoxWidth(double carLength, double boxWidth); //returns how many boxes will be loaded in a row of width
@@ -36,11 +34,15 @@ public:
 	//int CarBoxLoad(int quanity, int rowWidth, int rowHeight, int rowLength);
 
 	//Console choices
-	void SingleOrder();
-	void MultiOrder();
-	void CarCheck();
+	void singleOrder();
+	void multiOrder();
+	void carCheck();
 	void boxloading();
-	void CubeBoxloading();
+	void cubeBoxloading();
+	void boxesIntoPallet();
+	void boxesIntoCarViaCatalogue();
+
+	void chooseCar(int size_v, std::vector<Box> boxRef);
 
 	//int CarQuanOrder(double l, double h, double w, double cl, double ch, double cw);
 	bool loadRow(double ls, double c, int r);

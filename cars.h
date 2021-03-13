@@ -13,24 +13,29 @@ protected:
 	std::string name = "BaseCar";
 public:
 
-	inline BaseCar(double length, double width, double height, std::string name)
-		: length(length), width(width), area(length* width), height(height), name(name)
-	{
-	}
-	inline ~BaseCar() {}
+	 BaseCar(double length, double width, double height, std::string name)
+		: length(length), width(width), area(length* width), height(height), name(name) { }
+	 BaseCar(const BaseCar& car) : length(car.length), width(car.width), area(car.length * car.width), height(car.height), name(car.name) {}
+	 ~BaseCar() {}
 
-	inline bool checkLength(double totalLength) const{ return this->length <= totalLength; }
-	inline double getLength() const { return this->length; }
-	inline double getWidth() const { return this->width; }
-	inline double getHeight() const { return this->height; }
-	inline bool isOrdered() { return this->carQuantity > 0;}
-	inline void orderCar() { carQuantity++;}
-	inline int quantityCar() const{ return this->carQuantity; }
-	inline std::string getCarName() const { return this->name; }
-	inline void print() const { std::cout << "Size of " << name << std::endl; std::cout << length << " " << width << " " << height << std::endl; }
+
+	double getLength() const { return this->length; }
+	double getWidth() const { return this->width; }
+	double getHeight() const { return this->height; }
+	double getCarCube() const { return this->length * this->width * this->height; }
+
+	bool checkLength(double totalLength) const { return this->length <= totalLength; }
+	bool isOrdered() { return this->carQuantity > 0;}
+
+	void orderCar() { carQuantity++; }
+	void print() const { std::cout << "Size of " << name << std::endl; std::cout << length << " " << width << " " << height << std::endl; }
+
+	int quantityCar() const{ return this->carQuantity; }
+	std::string getCarName() const { return this->name; }
+
 
 	virtual BaseCar * duplicate() = 0;
-	virtual bool isApplicaple(int palletQuantity) = 0; //Check if this quantity pallets can be loaded in car
+	virtual bool isApplicaple(int palletQuantity) = 0; //Checks if this quantity pallets can be loaded in car
 	virtual int getLoadWidth(double palletWidth) = 0; 
 };
 
@@ -40,6 +45,7 @@ protected:
 
 public:
 	PorterCar();
+	PorterCar(const PorterCar & car) : BaseCar(car) {}
 	bool isApplicaple(int quantity);
 	BaseCar* duplicate();
 	int getLoadWidth(double palletWidth);
@@ -51,6 +57,7 @@ protected:
 
 public:
 	GazelCar();
+	GazelCar(const GazelCar & car) : BaseCar(car) {}
 	bool isApplicaple(int q);
 	BaseCar* duplicate();
 	int getLoadWidth(double palletWidth);
@@ -61,6 +68,7 @@ class MersedesCar : public BaseCar
 protected:
 public:
 	MersedesCar();
+	MersedesCar(const MersedesCar & car) : BaseCar(car) {}
 	bool isApplicaple(int palletQuantity);
 	BaseCar* duplicate();
 	int getLoadWidth(double palletWidth);
@@ -72,6 +80,7 @@ protected:
 
 public:
 	FiveTonCar();
+	FiveTonCar(const FiveTonCar & car) : BaseCar(car) {}
 	bool isApplicaple(int palletQuantity);
 	BaseCar* duplicate();
 	int getLoadWidth(double palletWidth);
@@ -83,6 +92,7 @@ protected:
 
 public:
 	TenTonCar();
+	TenTonCar(const TenTonCar & car) : BaseCar(car) {}
 	bool isApplicaple(int palletQuantity);
 	BaseCar* duplicate();
 	int getLoadWidth(double palletWidth);
@@ -94,6 +104,7 @@ protected:
 
 public:
 	EuroTrackCar();
+	EuroTrackCar(const EuroTrackCar & car) : BaseCar(car) {}
 	bool isApplicaple(int palletQuantity);
 	BaseCar* duplicate();
 	int getLoadWidth(double palletWidth);
